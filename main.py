@@ -1,5 +1,5 @@
-from gpiozero import Robot, LED
-
+from gpiozero import Robot
+import RPi.GPIO as GPIO
 from flask import Flask, jsonify, request
 from flask_cors import CORS
 from time import sleep
@@ -8,8 +8,13 @@ app = Flask(__name__)
 CORS(app, resources={r"/": {"origins": "*"}, r"/test": {"origins": "*"}, r"/forward": {"origins": "*"}, r"/backward": {"origins": "*"}, r"/left": {"origins": "*"}, r"/right": {"origins": "*"}, r"/reverse": {"origins": "*"}, r"/stop": {"origins": "*"}})
 
 robot = Robot((4, 14), (17, 27))
-led = LED(17)
 
+
+from time import sleep
+
+# Needs to be BCM. GPIO.BOARD lets you address GPIO ports by periperal
+# connector pin number, and the LED GPIO isn't on the connector
+GPIO.setmode(GPIO.BCM)
 
 @app.route('/', methods=['GET', 'POST'])
 def welcome():
@@ -19,9 +24,18 @@ def welcome():
 
 @app.route('/test', methods=['GET', 'POST'])
 def test():
-    led.on()
-    sleep(1)
-    led.off()
+    # set up GPIO output channel
+    GPIO.setup(16, GPIO.OUT)
+
+    # On
+    GPIO.output(16, GPIO.LOW)
+
+    # Wait a bit
+    sleep(3)
+
+    # Off
+    GPIO.output(16, GPIO.HIGH)
+
     return jsonify({"response": "BOAT says hi!"})
 
 @app.route('/forward', methods=['GET', 'POST'])
