@@ -8,6 +8,7 @@ app = Flask(__name__)
 CORS(app, resources={r"/": {"origins": "*"}, r"/test": {"origins": "*"}, r"/forward": {"origins": "*"}, r"/backward": {"origins": "*"}, r"/left": {"origins": "*"}, r"/right": {"origins": "*"}, r"/reverse": {"origins": "*"}, r"/stop": {"origins": "*"}})
 
 robot = Robot((4, 14), (17, 27))
+led = LED(17)
 
 
 @app.route('/', methods=['GET', 'POST'])
